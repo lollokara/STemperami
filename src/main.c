@@ -64,7 +64,8 @@ int main(void) {
     CLI_Init();
 
     // Watchdog Init
-    MX_IWDG_Init();
+    // Disabled for debugging boot issues
+    // MX_IWDG_Init();
 
     uint32_t last_tick = 0;
     uint32_t last_temp_trigger = 0;
@@ -103,7 +104,7 @@ int main(void) {
         CLI_Process();
 
         // Refresh Watchdog
-        HAL_IWDG_Refresh(&hiwdg);
+        // HAL_IWDG_Refresh(&hiwdg);
     }
 }
 
@@ -154,6 +155,7 @@ static void MX_GPIO_Init(void) {
     __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOD_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_AFIO_CLK_ENABLE(); // Enable AFIO for safety
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOC, LED_PIN, GPIO_PIN_RESET);
@@ -180,12 +182,19 @@ static void MX_IWDG_Init(void) {
 
 void Error_Handler(void) {
     __disable_irq();
-    // Blink LED rapidly to indicate error
-    // We assume GPIO is initialized. If not, this won't work, but we moved Init up.
+    // Force Enable GPIOC Clock just in case we crashed before MX_GPIO_Init
+    RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+
+    // Configure PC13 as Output Push-Pull (if not already)
+    // CRH Register: Pin 13 is bits 20-23. Mode=10 (2MHz), CNF=00 (Push-Pull) -> 0x2
+    GPIOC->CRH &= ~(0xF << 20); // Clear
+    GPIOC->CRH |= (0x2 << 20);  // Set 2MHz Output
+
     while (1) {
-        // Crude delay loop since we are in error state and interrupts might be disabled
+        // Fast Death Blink (Error State)
+        GPIOC->BRR = GPIO_PIN_13; // ON
         for (volatile int i = 0; i < 100000; i++);
-        // Toggle PC13 directly via BSRR to avoid HAL overhead dependency in crash state
-        GPIOC->ODR ^= GPIO_PIN_13;
+        GPIOC->BSRR = GPIO_PIN_13; // OFF
+        for (volatile int i = 0; i < 100000; i++);
     }
 }
