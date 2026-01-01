@@ -1,5 +1,6 @@
 #include "main.h"
-#include "uart.h"
+#include "serial_usb.h"
+#include "usb_device.h"
 #include "cli.h"
 #include "flash_store.h"
 #include "fan.h"
@@ -33,8 +34,8 @@ int main(void) {
     // Initialize all configured peripherals
     MX_GPIO_Init();
 
-    // UART Init
-    MX_USART1_UART_Init();
+    // USB Device Init
+    MX_USB_DEVICE_Init();
 
     // Fan Init (PWM)
     Fan_Init();
@@ -120,6 +121,15 @@ void SystemClock_Config(void) {
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
+        Error_Handler();
+    }
+
+    // USB Clock Config (USB needs 48MHz)
+    // PLL is 72MHz. 72 / 1.5 = 48MHz.
+    RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+    PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLL_DIV1_5;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
         Error_Handler();
     }
 }

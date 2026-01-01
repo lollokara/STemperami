@@ -30,7 +30,7 @@ Safety is paramount. The **Watchdog (IWDG)** continuously monitors system health
 Configuration is stored in emulated EEPROM (Flash Memory). Your custom temperature thresholds survive power cycles, ensuring the mission profile is always loaded on boot.
 
 ### 📟 **Cyber-Link CLI**
-Interact with the core via the Serial Command Line Interface. No drivers needed—just pure ASCII control.
+Interact with the core via the Serial Command Line Interface. The system enumerates as a USB Virtual COM Port (VCP).
 
 ---
 
@@ -40,15 +40,17 @@ Interact with the core via the Serial Command Line Interface. No drivers needed�
 | :--- | :--- | :--- | :--- |
 | **Fan Control** | `PA1` | PWM Output | Connect to Gate of N-Ch MOSFET |
 | **Thermal Sensor** | `PA0` | 1-Wire Data | DS18B20 (Requires 4.7k Pull-up) |
-| **Console TX** | `PA9` | UART TX | Connect to USB-TTL RX |
-| **Console RX** | `PA10`| UART RX | Connect to USB-TTL TX |
+| **USB Data+**   | `PA12`| USB D+ | Connect to USB Connector |
+| **USB Data-**   | `PA11`| USB D- | Connect to USB Connector |
 | **Heartbeat** | `PC13`| Status LED | Pulses @ 1Hz |
+
+*(Note: PA9/PA10 are no longer used for Serial Console. Use the USB Port.)*
 
 ---
 
 ## ⌨️ **Command Manual**
 
-Connect via Serial Terminal (Baud: `115200`, 8N1).
+Connect via Serial Terminal to the **STM32 Virtual COM Port** (Baud: Any, e.g. `115200`).
 
 | Command | Parameter | Description |
 | :--- | :--- | :--- |
