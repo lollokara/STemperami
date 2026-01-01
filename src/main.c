@@ -28,11 +28,24 @@ int main(void) {
     // HAL Init
     HAL_Init();
 
+    // Initialize GPIO first to allow LED status usage
+    MX_GPIO_Init();
+    // Turn LED ON (Active Low) to indicate boot start
+    HAL_GPIO_WritePin(LED_GPIO_PORT, LED_PIN, GPIO_PIN_RESET);
+
+    // USB Soft Disconnect: Pull PA12 Low for 10ms to force re-enumeration
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    GPIO_InitStruct.Pin = GPIO_PIN_12;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET);
+    HAL_Delay(10); // Simple delay
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_12); // Release pin for USB peripheral
+
     // Configure the system clock
     SystemClock_Config();
-
-    // Initialize all configured peripherals
-    MX_GPIO_Init();
 
     // USB Device Init
     MX_USB_DEVICE_Init();
@@ -167,6 +180,12 @@ static void MX_IWDG_Init(void) {
 
 void Error_Handler(void) {
     __disable_irq();
+    // Blink LED rapidly to indicate error
+    // We assume GPIO is initialized. If not, this won't work, but we moved Init up.
     while (1) {
+        // Crude delay loop since we are in error state and interrupts might be disabled
+        for (volatile int i = 0; i < 100000; i++);
+        // Toggle PC13 directly via BSRR to avoid HAL overhead dependency in crash state
+        GPIOC->ODR ^= GPIO_PIN_13;
     }
 }

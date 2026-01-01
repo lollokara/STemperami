@@ -9,12 +9,22 @@ static volatile uint16_t ring_tail = 0;
 
 void Serial_Print(const char *str) {
     // Note: CDC_Transmit_FS is non-blocking but might return USBD_BUSY.
-    // Ideally we should wait or retry. For now, simple retry loop.
+    // ideally we should wait or retry.
+    // We implement a timeout using a loop counter to avoid dependency on Systick in broken states.
     uint8_t status;
-    uint32_t timeout = HAL_GetTick() + 100;
+    volatile uint32_t i = 0;
+    // Approx 100ms timeout at 72MHz (assuming ~10 cycles per loop, 7.2M loops -> 100ms)
+    // USBD_BUSY means the buffer is still being sent.
+    const uint32_t MAX_WAIT_LOOPS = 1000000;
+
     do {
         status = CDC_Transmit_FS((uint8_t*)str, strlen(str));
-    } while(status == USBD_BUSY && HAL_GetTick() < timeout);
+        if (status == USBD_BUSY) {
+            i++;
+        } else {
+            break;
+        }
+    } while(i < MAX_WAIT_LOOPS);
 }
 
 void Serial_PrintLn(const char *str) {

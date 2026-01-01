@@ -17,7 +17,8 @@ extern AppSettings current_settings;
 extern float current_temperature;
 
 void CLI_Init(void) {
-    Serial_PrintLn("CLI Initialized. Type 'help' for commands.");
+    // Avoid printing at startup as USB might not be enumerated yet.
+    // The user will likely type 'help' to start.
 }
 
 static void CLI_ParseCommand(char *cmd) {
