@@ -1,0 +1,50 @@
+Continuing.
+halted: PC: 0x08004854
+
+Breakpoint 2, HAL_PCD_SuspendCallback (hpcd=0x20000f44 <hpcd_USB_FS>) at src/usbd_conf.c:51
+Continuing.
+halted: PC: 0x08004ec4
+
+Program received signal SIGINT, Interrupt.
+0x08004cc6 in Fault_Blink () at src/stm32f1xx_it.c:18
+#0  0x08004cc6 in Fault_Blink () at src/stm32f1xx_it.c:18
+#1  0x08004d0c in HardFault_Handler () at src/stm32f1xx_it.c:29
+#2  <signal handler called>
+#3  0x0800567a in USBD_LL_Suspend (pdev=<optimized out>) at lib/STM32_USB_Device_Library/usbd_core.c:497
+#4  0x08004ecc in HAL_PCD_SuspendCallback (hpcd=<optimized out>) at src/usbd_conf.c:52
+#5  0x080025ba in HAL_PCD_IRQHandler (hpcd=0x20000f44 <hpcd_USB_FS>) at /home/max/.platformio/packages/framework-stm32cubef1/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pcd.c:1422
+#6  0x08004d34 in USB_LP_CAN1_RX0_IRQHandler () at src/stm32f1xx_it.c:59
+#7  <signal handler called>
+#8  HAL_GetTick () at /home/max/.platformio/packages/framework-stm32cubef1/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c:307
+#9  0x08001242 in HAL_Delay (Delay=Delay@entry=100) at /home/max/.platformio/packages/framework-stm32cubef1/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c:382
+#10 0x080048d0 in main () at src/main.c:56
+#1  0x08004d0c in HardFault_Handler () at src/stm32f1xx_it.c:29
+#0  0x08004cc6 in Fault_Blink () at src/stm32f1xx_it.c:18
+        i = 471878
+#1  0x08004d0c in HardFault_Handler () at src/stm32f1xx_it.c:29
+No locals.
+#2  <signal handler called>
+No symbol table info available.
+#3  0x0800567a in USBD_LL_Suspend (pdev=<optimized out>) at lib/STM32_USB_Device_Library/usbd_core.c:497
+No locals.
+#4  0x08004ecc in HAL_PCD_SuspendCallback (hpcd=<optimized out>) at src/usbd_conf.c:52
+No locals.
+#5  0x080025ba in HAL_PCD_IRQHandler (hpcd=0x20000f44 <hpcd_USB_FS>) at /home/max/.platformio/packages/framework-stm32cubef1/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pcd.c:1422
+        wIstr = <optimized out>
+        store_ep = {0, 0, 0, 0, 0, 0, 0, 0}
+        i = <optimized out>
+#6  0x08004d34 in USB_LP_CAN1_RX0_IRQHandler () at src/stm32f1xx_it.c:59
+No locals.
+#7  <signal handler called>
+No symbol table info available.
+#8  HAL_GetTick () at /home/max/.platformio/packages/framework-stm32cubef1/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c:307
+No locals.
+#9  0x08001242 in HAL_Delay (Delay=Delay@entry=100) at /home/max/.platformio/packages/framework-stm32cubef1/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c:382
+        tickstart = 12
+        wait = 101
+#10 0x080048d0 in main () at src/main.c:56
+        GPIO_InitStruct = {Pin = 4096, Mode = 1, Pull = 0, Speed = 2}
+        last_tick = <optimized out>
+        last_temp_trigger = <optimized out>
+        temp_state = <optimized out>
+        temp_conversion_start = <optimized out>
