@@ -1,11 +1,9 @@
 #include "main.h"
-#include "serial_usb.h"
 #include "usb_device.h"
 #include "cli.h"
 #include "flash_store.h"
 #include "fan.h"
 #include "ds18b20.h"
-#include "stm32f1xx_it.h"
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -52,22 +50,13 @@ int main(void) {
 
     // Fan Init (PWM)
     Fan_Init();
-    // Checkpoint 1: 2 Blinks
-    HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN); HAL_Delay(100); HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN); HAL_Delay(100);
-    HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN); HAL_Delay(100); HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN); HAL_Delay(500);
-
+    
     // OneWire / DS18B20 Init
     DS18B20_Init();
-    // Checkpoint 2: 3 Blinks
-    for(int i=0; i<3; i++) { HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN); HAL_Delay(100); HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN); HAL_Delay(100); }
-    HAL_Delay(500);
 
     // Flash Store Init & Load
     FlashStore_Init();
     FlashStore_Load(&current_settings);
-    // Checkpoint 3: 4 Blinks
-    for(int i=0; i<4; i++) { HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN); HAL_Delay(100); HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN); HAL_Delay(100); }
-    HAL_Delay(500);
 
     // CLI Init
     CLI_Init();

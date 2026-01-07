@@ -73,6 +73,9 @@ void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd) {
 }
 
 USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev) {
+	hpcd_USB_FS.pData = pdev;
+    pdev->pData = &hpcd_USB_FS;
+
     hpcd_USB_FS.Instance = USB;
     hpcd_USB_FS.Init.dev_endpoints = 8;
     hpcd_USB_FS.Init.speed = PCD_SPEED_FULL;
@@ -87,7 +90,6 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev) {
     HAL_PCDEx_PMAConfig(&hpcd_USB_FS, 0x01, PCD_SNG_BUF, 0x110);
     HAL_PCDEx_PMAConfig(&hpcd_USB_FS, 0x82, PCD_SNG_BUF, 0x100);
 
-    pdev->pData = &hpcd_USB_FS;
     return USBD_OK;
 }
 
